@@ -2,7 +2,7 @@
 
 #include "StdAfx.h"
 
-#ifdef __APPLE_CC__
+#ifdef __OSX__
 #include <mach-o/dyld.h>
 #elif ENV_BEOS
 #include <kernel/image.h>
@@ -34,7 +34,7 @@ TRACEN((printf("CLibrary::Free(this=%p,%p)\n",(void *)this,(void *)_module)))
   if (_module == 0)
     return true;
 
-#ifdef __APPLE_CC__
+#ifdef __OSX__
   int ret = NSUnLinkModule ((NSModule)_module, 0);
 #elif ENV_BEOS
   int ret = unload_add_on((image_id)_module);
@@ -52,7 +52,7 @@ static FARPROC local_GetProcAddress(HMODULE module,LPCSTR lpProcName)
   void *ptr = 0;
   TRACEN((printf("local_GetProcAddress(%p,%s)\n",(void *)module,lpProcName)))
   if (module) {
-#ifdef __APPLE_CC__
+#ifdef __OSX__
     char name[MAX_PATHNAME_LEN];
     snprintf(name,sizeof(name),"_%s",lpProcName);
     name[sizeof(name)-1] = 0;
@@ -103,7 +103,7 @@ bool CLibrary::Load(LPCTSTR lpLibFileName)
 
   TRACEN((printf("CLibrary::Load(this=%p,%ls) => %s\n",(void *)this,lpLibFileName,name)))
 
-#ifdef __APPLE_CC__
+#ifdef __OSX__
   NSObjectFileImage image;
   NSObjectFileImageReturnCode nsret;
 
@@ -161,7 +161,7 @@ TRACEN((printf("load_add_on(%s)=%d\n",p.Path(),(int)image)))
     if (fctTest) fctTest();
 
   } else {
-#ifdef __APPLE_CC__
+#ifdef __OSX__
     NSLinkEditErrors c;
     int num_err;
     const char *file,*err;
