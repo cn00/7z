@@ -73,7 +73,7 @@ typedef struct _FILETIME
   DWORD dwHighDateTime;
 }FILETIME;
 
-#define HRESULT LONG
+#define HRESULT ULONGLONG
 #define FAILED(Status) ((HRESULT)(Status)<0)
 typedef ULONG PROPID;
 typedef LONG SCODE;
