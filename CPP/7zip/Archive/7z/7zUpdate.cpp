@@ -21,6 +21,10 @@
 #include "7zOut.h"
 #include "7zUpdate.h"
 
+#ifndef WIN32
+#include "Windows/FileIO.h"
+#endif
+
 namespace NArchive {
 namespace N7z {
 
@@ -779,22 +783,57 @@ struct CSolidGroup
   CRecordVector<CFolderRepack> folderRefs;
 };
 
-static const char *g_ExeExts[] =
-{
-    "dll"
-  , "exe"
-  , "ocx"
-  , "sfx"
-  , "sys"
-};
+//static const char *g_ExeExts[] =
+//{
+//    "dll"
+//  , "exe"
+//  , "ocx"
+//  , "sfx"
+//  , "sys"
+//};
 
-static bool IsExeExt(const wchar_t *ext)
+//static bool IsExeExt(const wchar_t *ext)
+//{
+//  for (unsigned i = 0; i < ARRAY_SIZE(g_ExeExts); i++)
+//    if (StringsAreEqualNoCase_Ascii(ext, g_ExeExts[i]))
+//      return true;
+//  return false;
+//}
+
+#ifndef _WIN32
+static bool IsExeFile(const CUpdateItem &ui)
 {
-  for (unsigned i = 0; i < ARRAY_SIZE(g_ExeExts); i++)
-    if (StringsAreEqualNoCase_Ascii(ext, g_ExeExts[i]))
-      return true;
+//  int dotPos = ui.Name.ReverseFind(L'.');
+//  if (dotPos >= 0)
+//     if (IsExeExt(ui.Name.Ptr(dotPos + 1)) ) return true;
+//
+//  if (ui.Attrib & FILE_ATTRIBUTE_UNIX_EXTENSION) {
+//    unsigned short st_mode =  ui.Attrib >> 16;
+//    if ((st_mode & 00111) && (ui.Size >= 2048))
+//    {
+//      // file has the execution flag and it's big enought
+//      // try to find if the file is a script
+//      NWindows::NFile::NIO::CInFile file;
+//      if (file.Open(ui.Name, false))
+//      {
+//        char buffer[2048];
+//        UINT32 processedSize;
+//        if (file.Read(buffer,sizeof(buffer),processedSize))
+//        {
+//          for(UInt32 i = 0; i < processedSize ; i++)
+//          {
+//            if (buffer[i] == 0)
+//        {
+//              return true; // this file is not a text (ascii, utf8, ...) !
+//        }
+//          }
+//       }
+//     }
+//   }
+//  }
   return false;
 }
+#endif
 
 struct CAnalysis
 {
@@ -854,7 +893,11 @@ HRESULT CAnalysis::GetFilterGroup(UInt32 index, const CUpdateItem &ui, CFilterMo
         }
       }
 
+#ifdef _WIN32
       if (IsExeExt(ext))
+#else
+      if (IsExeFile(ui))
+#endif
       {
         needReadFile = true;
         #ifdef _WIN32

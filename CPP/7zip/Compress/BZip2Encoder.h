@@ -137,7 +137,10 @@ public:
   DWORD ThreadFunc();
   #endif
 
-  CThreadInfo(): m_BlockSorterIndex(0), m_Block(0) {}
+  CThreadInfo():
+//    m_BlockSorterIndex(0),
+    m_Block(0)
+    {}
   ~CThreadInfo() { Free(); }
   bool Alloc();
   void Free();

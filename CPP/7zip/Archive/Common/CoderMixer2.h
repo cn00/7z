@@ -393,7 +393,7 @@ public:
   };
 
   CCoderMT(): EncodeMode(false) {}
-  ~CCoderMT() { CVirtThread::WaitThreadFinish(); }
+  virtual ~CCoderMT() { CVirtThread::WaitThreadFinish(); }
   
   void Code(ICompressProgressInfo *progress);
 };

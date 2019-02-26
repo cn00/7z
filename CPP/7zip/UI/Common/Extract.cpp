@@ -263,7 +263,7 @@ HRESULT Extract(
     if (!options.StdInMode)
     {
       const FString &arcPath = us2fs(arcPaths[i]);
-      if (!fi.Find(arcPath))
+      if (!fi.Find(arcPath,true))
         throw "there is no such archive";
       if (fi.IsDir())
         throw "can't decompress folder";
@@ -306,7 +306,7 @@ HRESULT Extract(
     }
     else
     {
-      if (!fi.Find(us2fs(arcPath)) || fi.IsDir())
+      if (!fi.Find(us2fs(arcPath),true) || fi.IsDir())
         throw "there is no such archive";
     }
 

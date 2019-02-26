@@ -238,7 +238,7 @@ public:
   
   bool WasBlockFinished() const { return _unpackBlockSize == 0; }
   const Byte *GetUnpackData() const { return _unpackedData; }
-  const UInt32 GetUnpackSize() const { return _pos - _writePos; }
+  UInt32 GetUnpackSize() const { return _pos - _writePos; }
 };
 
 }}

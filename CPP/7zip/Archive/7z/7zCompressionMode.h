@@ -61,10 +61,10 @@ struct CCompressionMethodMode
   CCompressionMethodMode():
       DefaultMethod_was_Inserted(false),
       Filter_was_Inserted(false),
-      PasswordIsDefined(false)
+//      PasswordIsDefined(false),
       #ifndef _7ZIP_ST
-      , NumThreads(1)
-      , MultiThreadMixer(true)
+      NumThreads(1),
+      MultiThreadMixer(true)
       #endif
   {}
 };

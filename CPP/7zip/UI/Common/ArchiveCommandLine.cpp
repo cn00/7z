@@ -20,6 +20,8 @@
 #ifdef _WIN32
 #include "../../../Windows/FileMapping.h"
 #include "../../../Windows/Synchronization.h"
+#else
+#include "myPrivate.h"
 #endif
 
 #include "ArchiveCommandLine.h"
@@ -121,6 +123,8 @@ enum Enum
   kListfileCharSet,
   kConsoleCharSet,
   kTechMode,
+
+  kUseLStat,
   
   kShareForWrite,
   kCaseSensitive,
@@ -239,6 +243,8 @@ static const CSwitchForm kSwitchForms[] =
   { "scs", NSwitchType::kString },
   { "scc", NSwitchType::kString },
   { "slt" },
+
+  { "l" },
 
   { "ssw" },
   { "ssc", NSwitchType::kMinus },
@@ -1143,6 +1149,9 @@ void CArcCmdLineParser::Parse2(CArcCmdLineOptions &options)
 
   options.YesToAll = parser[NKey::kYes].ThereIs;
 
+#ifdef ENV_HAVE_LSTAT
+  global_use_lstat = !parser[NKey::kUseLStat].ThereIs;
+#endif
 
   #ifndef _NO_CRYPTO
   options.PasswordEnabled = parser[NKey::kPassword].ThereIs;

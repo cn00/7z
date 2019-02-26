@@ -488,7 +488,7 @@ public:
   ~CObjectVector()
   {
     for (unsigned i = _v.Size(); i != 0;)
-      delete (T *)_v[--i];
+      delete ((T *)_v[--i]);
   }
   
   void ClearAndFree()

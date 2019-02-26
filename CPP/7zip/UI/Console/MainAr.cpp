@@ -46,7 +46,7 @@ static void PrintError(const char *message)
 
 #define NT_CHECK_FAIL_ACTION *g_StdStream << "Unsupported Windows version"; return NExitCode::kFatalError;
 
-int MY_CDECL main
+extern "C" int MY_CDECL p7zip_main
 (
   #ifndef _WIN32
   int numArgs, char *args[]

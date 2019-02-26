@@ -81,6 +81,7 @@ MY_CPU_LE_UNALIGN means that CPU is LITTLE ENDIAN and CPU supports unaligned mem
     || defined(__s390__) \
     || defined(__s390x__) \
     || defined(__zarch__) \
+    || defined(__sparc) \
     || (defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__))
   #define MY_CPU_BE
 #endif
@@ -185,6 +186,7 @@ Stop_Compiling_Bad_Endian
 
 
 #ifdef MY_CPU_X86_OR_AMD64
+#ifdef _7ZIP_ASM
 
 typedef struct
 {
@@ -211,6 +213,8 @@ int x86cpuid_GetFirm(const Cx86cpuid *p);
 #define x86cpuid_GetFamily(ver) (((ver >> 16) & 0xFF0) | ((ver >> 8) & 0xF))
 #define x86cpuid_GetModel(ver)  (((ver >> 12) &  0xF0) | ((ver >> 4) & 0xF))
 #define x86cpuid_GetStepping(ver) (ver & 0xF)
+
+#endif
 
 Bool CPU_Is_InOrder();
 Bool CPU_Is_Aes_Supported();

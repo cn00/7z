@@ -235,13 +235,13 @@ namespace NFileType
 namespace NFlags
 {
   const Byte kGarbled  = 1 << 0;
-  const Byte kAnsiPage = 1 << 1; // or (OLD_SECURED_FLAG) obsolete
+//  const Byte kAnsiPage = 1 << 1; // or (OLD_SECURED_FLAG) obsolete
   const Byte kVolume   = 1 << 2;
   const Byte kExtFile  = 1 << 3;
-  const Byte kPathSym  = 1 << 4;
-  const Byte kBackup   = 1 << 5; // obsolete
-  const Byte kSecured  = 1 << 6;
-  const Byte kDualName = 1 << 7;
+//  const Byte kPathSym  = 1 << 4;
+//  const Byte kBackup   = 1 << 5; // obsolete
+//  const Byte kSecured  = 1 << 6;
+//  const Byte kDualName = 1 << 7;
 }
 
 namespace NHostOS
@@ -680,6 +680,7 @@ STDMETHODIMP CHandler::GetArchiveProperty(PROPID propID, PROPVARIANT *value)
       {
         case k_ErrorType_UnexpectedEnd: v |= kpv_ErrorFlags_UnexpectedEnd; break;
         case k_ErrorType_Corrupted: v |= kpv_ErrorFlags_HeadersError; break;
+          default:break;
       }
       prop = v;
       break;

@@ -455,7 +455,7 @@ int CCensor::FindPrefix(const UString &prefix) const
   return -1;
 }
 
-#ifdef _WIN32
+#if 1 // #ifdef _WIN32
 
 bool IsDriveColonName(const wchar_t *s)
 {

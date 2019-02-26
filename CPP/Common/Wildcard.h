@@ -24,11 +24,11 @@ bool DoesWildcardMatchName(const UString &mask, const UString &name);
 
 namespace NWildcard {
 
-#ifdef _WIN32
+// FIXME #ifdef _WIN32
 // returns true, if name is like "a:", "c:", ...
 bool IsDriveColonName(const wchar_t *s);
 unsigned GetNumPrefixParts_if_DrivePath(UStringVector &pathParts);
-#endif
+// #endif
 
 struct CItem
 {
@@ -61,7 +61,9 @@ public:
   bool CheckPathVect(const UStringVector &pathParts, bool isFile, bool &include) const;
 
   CCensorNode(): Parent(0) { };
-  CCensorNode(const UString &name, CCensorNode *parent): Name(name), Parent(parent) { };
+  CCensorNode(const UString &name, CCensorNode *parent):
+
+    Parent(parent) { Name=(name);};
 
   UString Name; // WIN32 doesn't support wildcards in file names
   CObjectVector<CCensorNode> SubNodes;

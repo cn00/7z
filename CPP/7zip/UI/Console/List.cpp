@@ -595,6 +595,7 @@ HRESULT CFieldPrinter::PrintItemInfo(UInt32 index, const CListStat &st)
           needPrint = false;
           #endif
         }
+#ifdef _WIN32
         else if (f.PropID == kpidNtReparse)
         {
           UString s;
@@ -604,6 +605,7 @@ HRESULT CFieldPrinter::PrintItemInfo(UInt32 index, const CListStat &st)
             g_StdOut.PrintUString(s, TempAString);
           }
         }
+#endif
       
         if (needPrint)
         {
@@ -1014,8 +1016,10 @@ HRESULT ListArchives(CCodecs *codecs,
       if (!fi.Find(us2fs(arcPath)))
       {
         DWORD errorCode = GetLastError();
+/* FIXME
         if (errorCode == 0)
           errorCode = ERROR_FILE_NOT_FOUND;
+*/
         lastError = HRESULT_FROM_WIN32(lastError);;
         g_StdOut.Flush();
         *g_ErrStream << endl << kError << NError::MyFormatMessage(errorCode) <<
