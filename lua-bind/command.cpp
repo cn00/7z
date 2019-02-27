@@ -1,4 +1,4 @@
-#include "p7zip/lua-bind/str2args.h"
+#include "lua-bind/str2args.h"
 #include "command.h"
 
 
