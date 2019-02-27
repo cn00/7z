@@ -36,6 +36,14 @@ file(GLOB_RECURSE P7ZIP_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/CPP/*.cpp
 )
 # message(stats "${P7ZIP_SRCS}")
+file(GLOB_RECURSE P7ZIP_LUA_BIND_SRCS 
+    ${CMAKE_CURRENT_SOURCE_DIR}/lua-bind/*.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/lua-bind/*.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/lua-bind/*.cpp
+)
+if(USE_LUA_BIND)
+    set(P7ZIP_SRCS ${P7ZIP_SRCS} ${P7ZIP_LUA_BIND_SRCS})
+endif(USE_LUA_BIND)
 
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/
@@ -44,6 +52,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/CPP/Common
     ${CMAKE_CURRENT_SOURCE_DIR}/CPP/myWindows
     ${CMAKE_CURRENT_SOURCE_DIR}/CPP/include_windows
+    /usr/local/include/lua
 )
 
 add_library(p7zip_static ${P7ZIP_SRCS})
@@ -51,6 +60,10 @@ source_group_by_dir(${CMAKE_CURRENT_SOURCE_DIR} P7ZIP_SRCS)
 
 if (BUILD_SHARED_LIB)
     add_library(p7zip SHARED ${P7ZIP_SRCS})
+    if(USE_LUA_BIND)
+        find_library(lua lua)
+        target_link_libraries(p7zip ${lua})
+    endif(USE_LUA_BIND)
 endif(BUILD_SHARED_LIB)
 
 if (APPLE AND BUILD_SHARED_LIB)
