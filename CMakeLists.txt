@@ -55,8 +55,6 @@ include_directories(
     /usr/local/include/lua
 )
 
-add_library(p7zip_static ${P7ZIP_SRCS})
-source_group_by_dir(${CMAKE_CURRENT_SOURCE_DIR} P7ZIP_SRCS)
 
 if (BUILD_SHARED_LIB)
     add_library(p7zip SHARED ${P7ZIP_SRCS})
@@ -64,7 +62,10 @@ if (BUILD_SHARED_LIB)
         find_library(lua lua)
         target_link_libraries(p7zip ${lua})
     endif(USE_LUA_BIND)
+else()
+    add_library(p7zip_static ${P7ZIP_SRCS})
 endif(BUILD_SHARED_LIB)
+source_group_by_dir(${CMAKE_CURRENT_SOURCE_DIR} P7ZIP_SRCS)
 
 if (APPLE AND BUILD_SHARED_LIB)
 	find_library(ObjC objc)
