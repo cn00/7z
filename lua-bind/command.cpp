@@ -1,6 +1,9 @@
-#include "lua-bind/str2args.h"
+#include "str2args.h"
 #include "command.h"
+#include "Common/StdOutStream.h"
+#include "Common/UTFConvert.h"
 
+extern UString g_LastErr;
 
 extern "C"
 {
@@ -26,7 +29,10 @@ extern "C"
         const char *cmd = luaL_checkstring( L,1 );
         int ret = p7zip_executeCommand(cmd);
         lua_pushnumber(L, ret);
-        return 1;
+        AString dis;
+        ConvertUnicodeToUTF8(g_LastErr, dis);
+        lua_pushstring(L, dis.Ptr());
+        return 2;
     }
 
     extern int luaopen_p7zip(lua_State *L)

@@ -63,7 +63,7 @@ if (BUILD_SHARED_LIB)
         target_link_libraries(p7zip ${lua})
     endif(USE_LUA_BIND)
 else()
-    add_library(p7zip_static ${P7ZIP_SRCS})
+    add_library(p7zip ${P7ZIP_SRCS})
 endif(BUILD_SHARED_LIB)
 source_group_by_dir(${CMAKE_CURRENT_SOURCE_DIR} P7ZIP_SRCS)
 

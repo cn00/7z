@@ -17,6 +17,7 @@ using namespace NWindows;
 
 CStdOutStream *g_StdStream = NULL;
 CStdOutStream *g_ErrStream = NULL;
+UString g_LastErr;
 
 extern int Main2(
   #ifndef _WIN32
@@ -81,6 +82,7 @@ extern "C" int MY_CDECL p7zip_main
   }
   catch(const CArcCmdLineException &e)
   {
+    g_LastErr = e;
     PrintError(kException_CmdLine_Error_Message);
     if (g_ErrStream)
       *g_ErrStream << e << endl;
@@ -88,6 +90,7 @@ extern "C" int MY_CDECL p7zip_main
   }
   catch(const CSystemException &systemError)
   {
+    g_LastErr = NError::MyFormatMessage(systemError.ErrorCode);
     if (systemError.ErrorCode == E_OUTOFMEMORY)
     {
       PrintError(kMemoryExceptionMessage);
@@ -114,6 +117,7 @@ extern "C" int MY_CDECL p7zip_main
   }
   catch(const UString &s)
   {
+      g_LastErr = s;
     if (g_ErrStream)
     {
       PrintError(kExceptionErrorMessage);
@@ -123,6 +127,7 @@ extern "C" int MY_CDECL p7zip_main
   }
   catch(const AString &s)
   {
+    //g_LastErr = new UString(s);
     if (g_ErrStream)
     {
       PrintError(kExceptionErrorMessage);
@@ -132,6 +137,7 @@ extern "C" int MY_CDECL p7zip_main
   }
   catch(const char *s)
   {
+    //g_LastErr = UString(s);
     if (g_ErrStream)
     {
       PrintError(kExceptionErrorMessage);
@@ -141,6 +147,7 @@ extern "C" int MY_CDECL p7zip_main
   }
   catch(const wchar_t *s)
   {
+    g_LastErr = UString(s);
     if (g_ErrStream)
     {
       PrintError(kExceptionErrorMessage);
