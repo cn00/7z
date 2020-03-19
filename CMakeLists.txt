@@ -25,6 +25,8 @@ endmacro(source_group_by_dir)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions -DNDEBUG -D_REENTRANT -DENV_UNIX")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBREAK_HANDLER -DUNICODE -D_UNICODE -DUNIX_USE_WIN_FILE -fPIC")
 
+set(USE_LUA_BIND ON)
+
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
 # You can define multiple libraries, and CMake builds it for you.
@@ -36,6 +38,7 @@ file(GLOB_RECURSE P7ZIP_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/CPP/*.cpp
 )
 # message(stats "${P7ZIP_SRCS}")
+
 file(GLOB_RECURSE P7ZIP_LUA_BIND_SRCS 
     ${CMAKE_CURRENT_SOURCE_DIR}/lua-bind/*.h
     ${CMAKE_CURRENT_SOURCE_DIR}/lua-bind/*.c
@@ -52,18 +55,18 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/CPP/Common
     ${CMAKE_CURRENT_SOURCE_DIR}/CPP/myWindows
     ${CMAKE_CURRENT_SOURCE_DIR}/CPP/include_windows
-    /usr/local/include/lua
+    ${CMAKE_CURRENT_SOURCE_DIR}/../lua/src
 )
 
 
 if (BUILD_SHARED_LIB)
     add_library(p7zip SHARED ${P7ZIP_SRCS})
     if(USE_LUA_BIND)
-        find_library(lua lua)
+        find_library(lua xlua)
         target_link_libraries(p7zip ${lua})
     endif(USE_LUA_BIND)
 else()
-    add_library(p7zip ${P7ZIP_SRCS})
+    add_library(p7zip STATIC ${P7ZIP_SRCS})
 endif(BUILD_SHARED_LIB)
 source_group_by_dir(${CMAKE_CURRENT_SOURCE_DIR} P7ZIP_SRCS)
 

@@ -24,11 +24,13 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/../CPP/Common
     ${CMAKE_CURRENT_SOURCE_DIR}/../CPP/myWindows
     ${CMAKE_CURRENT_SOURCE_DIR}/../CPP/include_windows
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../lua-5.3.5/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../lua/src
 )
 
 add_library(p7zip_lua_bind ${p7zip_lua_bind_SRCS})
 source_group_by_dir(${CMAKE_CURRENT_SOURCE_DIR} p7zip_lua_bind_SRCS)
 
-add_library(luap7zip SHARED ${p7zip_lua_bind_SRCS})
+add_library(luap7zip SHARED)
+target_link_libraries(luap7zip p7zip)
+target_link_libraries(luap7zip p7zip_lua_bind)
 target_link_libraries(luap7zip xlua)
