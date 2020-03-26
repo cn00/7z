@@ -26,6 +26,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions -DNDEBUG -D_REENTRANT -DENV
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBREAK_HANDLER -DUNICODE -D_UNICODE -DUNIX_USE_WIN_FILE -fPIC")
 
 set(USE_LUA_BIND ON)
+set(BUILD_SHARED_LIB ON)
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
@@ -56,18 +57,20 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/CPP/myWindows
     ${CMAKE_CURRENT_SOURCE_DIR}/CPP/include_windows
     ${CMAKE_CURRENT_SOURCE_DIR}/../lua/src
-)
+    ${CMAKE_CURRENT_SOURCE_DIR}/../lua-intf/LuaIntf
+    ${CMAKE_CURRENT_SOURCE_DIR}/../lua-intf/LuaIntf/impl
+  )
 
 
-if (BUILD_SHARED_LIB)
+#if (BUILD_SHARED_LIB)
     add_library(p7zip SHARED ${P7ZIP_SRCS})
-    if(USE_LUA_BIND)
-        find_library(lua xlua)
-        target_link_libraries(p7zip ${lua})
-    endif(USE_LUA_BIND)
-else()
-    add_library(p7zip STATIC ${P7ZIP_SRCS})
-endif(BUILD_SHARED_LIB)
+    # if(USE_LUA_BIND)
+        find_library(LIBLUA liblua ../lua)
+        target_link_libraries(p7zip liblua)
+    # endif(USE_LUA_BIND)
+#else()
+#    add_library(p7zip STATIC ${P7ZIP_SRCS})
+#endif(BUILD_SHARED_LIB)
 source_group_by_dir(${CMAKE_CURRENT_SOURCE_DIR} P7ZIP_SRCS)
 
 if (APPLE AND BUILD_SHARED_LIB)

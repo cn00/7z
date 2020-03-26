@@ -275,7 +275,7 @@ void Bcj2Enc_Encode(CBcj2Enc *p)
       
         p->src = src;
         p->srcLim = srcLim;
-        p->finishMode = finishMode;
+        p->finishMode = (EBcj2Enc_FinishMode)finishMode;
         
         if (p->state != BCJ2_ENC_STATE_ORIG || src == srcLim)
           return;
