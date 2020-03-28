@@ -8,6 +8,11 @@
 #include "MyString.h"
 #include "MyTypes.h"
 
+
+static const char kNewLineChar =  '\n';
+
+static const char *kFileOpenMode = "wt";
+
 class CStdOutStream
 {
   FILE *_stream;
@@ -21,7 +26,7 @@ public:
   // bool IsDefined() const { return _stream  != NULL; }
 
   operator FILE *() { return _stream; }
-  bool Open(const char *fileName) throw();
+  bool Open(const char *fileName, const char * mode = kFileOpenMode) throw();
   bool Close() throw();
   bool Flush() throw();
   
@@ -29,6 +34,11 @@ public:
   {
     (*func)(*this);
     return *this;
+  }
+    
+  CStdOutStream & Print(const char *s) throw()
+  {
+      return *this << s;
   }
 
   CStdOutStream & operator<<(const char *s) throw()

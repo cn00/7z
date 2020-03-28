@@ -40,7 +40,7 @@
   
   #if !defined(ENV_BEOS) && !defined(ANDROID_NDK)
 
-    #define ENV_HAVE_GETPASS
+    #define ENV_HAVE_GETPASS 0
 
     #if !defined(sun)
       #define ENV_HAVE_TIMEGM

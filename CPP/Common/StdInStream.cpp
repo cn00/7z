@@ -86,7 +86,7 @@ UString CStdInStream::ScanUStringUntilNewLine()
 }
 #else
 
-#ifndef ENV_HAVE_GETPASS
+#if !ENV_HAVE_GETPASS
 UString CStdInStream::ScanUStringUntilNewLine()
 {
   AString s = ScanStringUntilNewLine(true);

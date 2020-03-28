@@ -15,7 +15,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/fl_ask.H>
 #else
-#ifdef ENV_HAVE_GETPASS
+#if ENV_HAVE_GETPASS
 #include <pwd.h>
 #include <unistd.h>
 #include "Common/MyException.h"
@@ -67,7 +67,7 @@ NUserAnswerMode::EEnum ScanUserYesNoAllQuit(CStdOutStream *outStream)
 #endif
 #endif
 
-#ifdef ENV_HAVE_GETPASS
+#if ENV_HAVE_GETPASS
 #define MY_DISABLE_ECHO
 #endif
 
@@ -88,7 +88,7 @@ UString GetPassword(CStdOutStream *outStream,bool verify)
       ":";
     outStream->Flush();
   }
-#ifdef ENV_HAVE_GETPASS
+#if ENV_HAVE_GETPASS
   AString oemPassword = getpass("");
   if ( (verify) && (outStream) )
   {

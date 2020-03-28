@@ -10,28 +10,6 @@
 
 extern UString g_LastErr;
 
-
- class Web
- {
-    static std::string _base_url;
- public:
-     // base_url is optional
-     Web(const std::string& base_url){_base_url = base_url;};
-     ~Web(){};
-
-     static void go_home(){};
-
-     static std::string home_url(){return _base_url;}
-     static void set_home_url(const std::string& url){_base_url = url;}
-
-     std::string url() const{return _base_url;}
-     void set_url(const std::string& url){};
-     std::string resolve_url(const std::string& uri){return _base_url + uri;}
-
-     // doing reload if uri is empty
-     std::string load(const std::string& uri){return _base_url + uri;};
- };
-std::string Web::_base_url;
 extern "C"
 {
     extern int p7zip_executeCommand(const char *cmd) {
@@ -62,20 +40,11 @@ extern "C"
  
     extern int luaopen_p7zip(lua_State *L)
     {
-        LuaIntf::LuaBinding(L).beginClass<Web>("Web")
-            .addConstructor(LUA_ARGS(const std::string))
-            .addStaticProperty("home_url", &Web::home_url, &Web::set_home_url)
-            .addStaticFunction("go_home", &Web::go_home)
-            .addProperty("url", &Web::url, &Web::set_url)
-            .addFunction("resolve_url", &Web::resolve_url)
-            .addFunction("load", &Web::load, LUA_ARGS(const std::string))
-            .addStaticFunction("lambda", [] {
-                // you can use C++11 lambda expression here too
-                return "yes";
-            })
-        .endClass();
-        
+        LuaIntf::LuaRef mod = LuaIntf::LuaRef::createTable(L);
         LuaIntf::LuaBinding(L).beginModule("p7zip")
+        .addVariableRef("g_StdOut", &g_StdOut)
+        .addVariableRef("g_StdErr", &g_StdErr)
+        .addFunction("execute", &p7zip_executeCommand, LUA_ARGS(const char*))
         .beginClass<CArcCmdLineOptions>("CArcCmdLineOptions")
             .addVariableRef("HelpMode", &CArcCmdLineOptions::HelpMode)
         .endClass()
@@ -87,12 +56,20 @@ extern "C"
                 return "yes";
             })
         .endClass()
+        .beginClass<CStdOutStream>("CStdOutStream")
+            .addConstructor(LUA_ARGS(FILE *))
+            .addFunction("Open", &CStdOutStream::Open, LUA_ARGS(const char*, const char*))
+            .addFunction("Close", &CStdOutStream::Close)
+            .addFunction("Print", &CStdOutStream::Print, LUA_ARGS(const char*))
+            .addFunction("Flush", &CStdOutStream::Flush)
+        .endClass()
         .endModule();
-        
-        lua_settop(L, 0);
-        lua_newtable(L);
-        lua_pushcfunction(L, execute);
-        lua_setfield(L, -2, "execute");
+        mod.pushToStack();
+
+//        lua_settop(L, 0);
+//        lua_newtable(L);
+//        lua_pushcfunction(L, execute);
+//        lua_setfield(L, -2, "execute");
 
         return 1;
     }

@@ -9,19 +9,16 @@
 #include "StringConvert.h"
 #include "UTFConvert.h"
 
-static const char kNewLineChar =  '\n';
-
-static const char *kFileOpenMode = "wt";
 
 extern int g_CodePage;
 
 CStdOutStream g_StdOut(stdout);
 CStdOutStream g_StdErr(stderr);
 
-bool CStdOutStream::Open(const char *fileName) throw()
+bool CStdOutStream::Open(const char *fileName, const char * mode) throw()
 {
   Close();
-  _stream = fopen(fileName, kFileOpenMode);
+  _stream = fopen(fileName, mode);
   _streamIsOpen = (_stream != 0);
   return _streamIsOpen;
 }
