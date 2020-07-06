@@ -204,7 +204,7 @@ static HRESULT DecompressArchive(
     if (archive->GetArchiveProperty(kpidPhySize, &prop) == S_OK)
       ConvertPropVariantToUInt64(prop, stdInProcessed);
   }
-  else
+  else // 真正开始解压
     result = archive->Extract(&realIndices.Front(), realIndices.Size(), testMode, ecs);
   if (result == S_OK && !options.StdInMode)
     result = ecs->SetDirsTimes();

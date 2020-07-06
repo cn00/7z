@@ -4,10 +4,12 @@
 #define __OPEN_ARCHIVE_H
 
 #include "../../../Windows/PropVariant.h"
-
+#include <memory>
 #include "ArchiveOpenCallback.h"
 #include "LoadCodecs.h"
 #include "Property.h"
+
+//#include "lua-intf/LuaIntf/impl/CppArgBase.h"
 
 #ifndef _SFX
 
@@ -112,6 +114,8 @@ struct COpenType
 };
 
 struct COpenOptions
+    //:public _out<COpenOptions>
+    //:public std::shared_ptr<COpenOptions>
 {
   CCodecs *codecs;
   COpenType openType;
@@ -137,7 +141,9 @@ struct COpenOptions
       callback(NULL),
       callbackSpec(NULL),
       stdInMode(false)
-    {}
+    {
+        printf("COpenOptions:%x", this);
+    }
 
 };
 

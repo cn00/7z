@@ -3,10 +3,11 @@
 #include "Common/StdOutStream.h"
 #include "Common/UTFConvert.h"
 
+
 #include "7zip/UI/Common/ArchiveCommandLine.h"
-#define LUAINTF_LINK_LUA_COMPILED_IN_CXX 0
+#include "CPP/Common/StringConvert.h"
+//#define LUAINTF_LINK_LUA_COMPILED_IN_CXX 0
 #include "LuaIntf.h"
-#include "CppArg.h"
 
 extern UString g_LastErr;
 
@@ -40,38 +41,123 @@ extern "C"
  
     extern int luaopen_p7zip(lua_State *L)
     {
-        LuaIntf::LuaRef mod = LuaIntf::LuaRef::createTable(L);
-        LuaIntf::LuaBinding(L).beginModule("p7zip")
-        .addVariableRef("g_StdOut", &g_StdOut)
-        .addVariableRef("g_StdErr", &g_StdErr)
-        .addFunction("execute", &p7zip_executeCommand, LUA_ARGS(const char*))
-        .beginClass<CArcCmdLineOptions>("CArcCmdLineOptions")
-            .addVariableRef("HelpMode", &CArcCmdLineOptions::HelpMode)
+//        LuaIntf::LuaRef mod = LuaIntf::LuaRef::createTable(L);
+//        LuaIntf::LuaBinding(mod)
+        
+        //      UString GetUnicodeString(const AString &ansiString)
+        typedef UString (*a2us)(const AString& ansiString);
+        typedef AString (*u2as)(const UString& ansiString);
+
+        LuaIntf::LuaBinding(L)
+        .beginModule("p7zip")
+            .addVariableRef("g_StdOut", &g_StdOut)
+            .addVariableRef("g_StdErr", &g_StdErr)
+            .addFunction("execute", &p7zip_executeCommand, LUA_ARGS(const char*))
+            .addFunction("ConvertUnicodeToUTF8", &ConvertUnicodeToUTF8, LUA_ARGS(const UString &src, AString &dis))
+            .addFunction("A2UString", [](AString& as) -> UString{return GetUnicodeString(as);})
+            .addFunction("U2AString", [](UString& s) ->  AString{return GetAnsiString(s);})
+            .addFunction("GetUnicodeString", (a2us)&GetUnicodeString, LUA_ARGS(const AString& ansiString))
+            .addFunction("GetAnsiString",    (u2as)&GetAnsiString,    LUA_ARGS(const UString& unicodeString))
+        .beginClass<AString>("AString")
+            .addConstructor(LUA_SP(AString), LUA_ARGS(void))
+            .addConstructor(LUA_SP(AString), LUA_ARGS(const char *))
+            .addFunction("IsEqualTo", &AString::IsEqualTo, LUA_ARGS(const char *))
+            .addFunction("Trim", &AString::Trim)
+//            .addStaticFunction("tostring1", [](AString& self)->const char*{return self.Ptr();})
+            .addMetaFunction("tostring", [](AString& self)->const char*{return self.Ptr();})
         .endClass()
-        .beginClass<CArcCmdLineParser>("CArcCmdLineParser")
-            .addFunction("Parse1", &CArcCmdLineParser::Parse1, LUA_ARGS(const UStringVector, CArcCmdLineOptions))
-            .addFunction("Parse2", &CArcCmdLineParser::Parse2, LUA_ARGS(CArcCmdLineOptions))
-            .addStaticFunction("lambda", [] {
-                // you can use C++11 lambda expression here too
-                return "yes";
-            })
+        .beginClass<UString>("UString")
+            .addConstructor(LUA_SP(UString), LUA_ARGS(void))
+            .addMetaFunction("tostring", [L](UString& self)->const char*{return GetAnsiString(self).Ptr();})
         .endClass()
+//        .beginClass<CArcCmdLineOptions>("CArcCmdLineOptions")
+//            .addVariableRef("HelpMode", &CArcCmdLineOptions::HelpMode)
+//        .endClass()
+//        .beginClass<CArcCmdLineParser>("CArcCmdLineParser")
+//            .addFunction("Parse1", &CArcCmdLineParser::Parse1, LUA_ARGS(const UStringVector, CArcCmdLineOptions))
+//            .addFunction("Parse2", &CArcCmdLineParser::Parse2, LUA_ARGS(CArcCmdLineOptions))
+//            .addStaticFunction("lambda", [] {
+//                // you can use C++11 lambda expression here too
+//                return "yes";
+//            })
+//        .endClass()
         .beginClass<CStdOutStream>("CStdOutStream")
-            .addConstructor(LUA_ARGS(FILE *))
-            .addFunction("Open", &CStdOutStream::Open, LUA_ARGS(const char*, const char*))
+            .addConstructor(LUA_SP(std::shared_ptr<CStdOutStream>), LUA_ARGS(FILE *))
+            .addFunction("Open", &CStdOutStream::Open, LUA_ARGS(const char *fileName, const char * mode))
             .addFunction("Close", &CStdOutStream::Close)
             .addFunction("Print", &CStdOutStream::Print, LUA_ARGS(const char*))
             .addFunction("Flush", &CStdOutStream::Flush)
         .endClass()
+        .beginClass<COpenOptions>("COpenOptions")
+            .addConstructor(LUA_SP(COpenOptions), LUA_ARGS(void))
+            .addVariable("filePath", &COpenOptions::filePath)
+            .addVariable("codecs", &COpenOptions::codecs)
+            .addVariable("openType", &COpenOptions::openType)
+            .addVariable("types", &COpenOptions::types)
+            .addVariable("excludedFormats", &COpenOptions::excludedFormats)
+            .addVariable("stream", &COpenOptions::stream)
+            .addVariable("seqStream", &COpenOptions::seqStream)
+            .addVariable("callback", &COpenOptions::callback)
+            .addVariable("filePath", &COpenOptions::filePath)
+            .addVariable("stdInMode", &COpenOptions::stdInMode)
+        .endClass()
+        .beginClass<CArc>("CArc")
+            .addConstructor(LUA_SP(std::shared_ptr<CArc>), LUA_ARGS(void))
+            .addVariable("Path", &CArc::Path)
+            .addVariable("filePath", &CArc::filePath)
+            .addVariable("Archive", &CArc::Archive)
+            .addVariable("InStream", &CArc::InStream)
+            .addFunction("OpenStreamOrFile", &CArc::OpenStreamOrFile, LUA_ARGS(COpenOptions&op))
+//            .addMetaFunction("OpenStreamOrFile", [L](CArc& self, COpenOptions& op){
+//                printf("op:%x", &op);
+//                lua_pushlightuserdata(L, &op);
+//                return self.OpenStreamOrFile(op);
+//            })
+            .addFunction("Close", &CArc::Close)
+            .addFunction("GetItem", &CArc::GetItem, LUA_ARGS(UInt32 index, CReadArcItem &item))
+            .addFunction("GetItemSize", &CArc::GetItemSize, LUA_ARGS(UInt32 index, UInt64 &size, bool &defined))
+            .addFunction("OpenStream", &CArc::OpenStream, LUA_ARGS(const COpenOptions & op))
+            .addFunction("ReOpen", &CArc::ReOpen, LUA_ARGS(COpenOptions &op))
+        .endClass()
+        .beginClass<CCodecs>("CCodecs")
+            .addConstructor(LUA_SP(std::shared_ptr<CCodecs>), LUA_ARGS(void))
+        .endClass()
+        .beginClass<CReadArcItem>("CReadArcItem")
+            .addConstructor(LUA_SP(std::shared_ptr<CReadArcItem>), LUA_ARGS(void))
+            .addVariable("Path", &CReadArcItem::Path)
+            .addVariable("MainPath", &CReadArcItem::MainPath)
+            .addVariable("IsAltStream", &CReadArcItem::IsAltStream)
+            .addVariable("WriteToAltStreamIfColon", &CReadArcItem::WriteToAltStreamIfColon)
+            .addVariable("IsDir", &CReadArcItem::IsDir)
+            .addVariable("MainIsDir", &CReadArcItem::MainIsDir)
+            .addVariable("ParentIndex", &CReadArcItem::ParentIndex)
+        .endClass()
+
+        .beginClass<COpenCallbackImp>("COpenCallbackImp")
+            .addVariable("FileNames", &COpenCallbackImp::FileNames)
+            .addVariable("FileSizes", &COpenCallbackImp::FileSizes)
+            .addFunction("SetTotal", &COpenCallbackImp::SetTotal, LUA_ARGS(const UInt64 *files, const UInt64 *bytes))
+            .addFunction("SetCompleted", &COpenCallbackImp::SetCompleted, LUA_ARGS(const UInt64 *files, const UInt64 *bytes))
+        .endClass()
+        .beginClass<IInArchive>("IInArchive")
+            .addFunction("Open", &IInArchive::Open, LUA_ARGS(IInStream *stream, const UInt64 *, IArchiveOpenCallback *callback))
+            .addFunction("Close", &IInArchive::Close)
+            .addFunction("Extract", &IInArchive::Extract, LUA_ARGS(const UInt32 *indices, UInt32 numItems, Int32 testMode, IArchiveExtractCallback *extractCallback))
+            .addFunction("GetArchiveProperty", &IInArchive::GetArchiveProperty, LUA_ARGS(PROPID propID, PROPVARIANT *value))
+            .addFunction("GetNumberOfItems", &IInArchive::GetNumberOfItems, LUA_ARGS(UInt32 *numItems))
+        .endClass()
+        .beginClass<CArchiveExtractCallback>("CArchiveExtractCallback")
+        
+        .endClass()
         .endModule();
-        mod.pushToStack();
+//        mod.pushToStack();
 
 //        lua_settop(L, 0);
 //        lua_newtable(L);
 //        lua_pushcfunction(L, execute);
 //        lua_setfield(L, -2, "execute");
 
-        return 1;
+        return 0;
     }
 
 }

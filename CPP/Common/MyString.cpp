@@ -1045,6 +1045,12 @@ UString &UString::operator=(const wchar_t *s)
   return *this;
 }
 
+UString &UString::operator=(const AString &s)
+{
+    extern bool ConvertUTF8ToUnicode(const AString &src, UString &dest);
+    ConvertUTF8ToUnicode(s, *this);
+}
+
 UString &UString::operator=(const UString &s)
 {
   if (&s == this)

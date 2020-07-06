@@ -4,6 +4,7 @@
 #define __COMMON_STRING_H
 
 #include <string.h>
+#include <memory>
 
 #ifdef ENV_HAVE_WCHAR__H
 #include <wchar.h>
@@ -193,6 +194,7 @@ bool StringsAreEqualNoCase_Ascii(const wchar_t *s1, const wchar_t *s2) throw();
 // #define MY_STRING_DELETE(_p_) my_delete(_p_);
 
 class AString
+//: public std::shared_ptr<AString>
 {
   char *_chars;
   unsigned _len;
@@ -421,6 +423,7 @@ void operator-(const AString &s, unsigned c);
 
 
 class UString
+//: public std::shared_ptr<UString>
 {
   wchar_t *_chars;
   unsigned _len;
@@ -457,6 +460,7 @@ class UString
   UString &operator+=(unsigned char c);
   UString &operator=(char c);
   UString &operator=(unsigned char c);
+  UString &operator=(const AString &c);
   UString(char c);
   UString(unsigned char c);
   void Find(char c) const;
