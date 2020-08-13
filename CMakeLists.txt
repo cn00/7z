@@ -22,7 +22,7 @@ macro(source_group_by_dir proj_dir source_files)
     endif(MSVC OR APPLE)
 endmacro(source_group_by_dir)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions -DNDEBUG -D_REENTRANT -DENV_UNIX")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions -DNDEBUG -D_REENTRANT -DENV_UNIX -add_rpath=libs")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_NO_CRYPTO -DBREAK_HANDLER -DUNICODE -D_UNICODE -DUNIX_USE_WIN_FILE -fPIC")
 
 set(USE_LUA_BIND ON)
