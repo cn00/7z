@@ -39,32 +39,34 @@ extern "C"
         return 2;
     }
  
-    extern int luaopen_p7zip(lua_State *L)
+    extern "C" int luaopen_p7zip(lua_State *L)
     {
-//        LuaIntf::LuaRef mod = LuaIntf::LuaRef::createTable(L);
-//        LuaIntf::LuaBinding(mod)
-        
+        LuaIntf::LuaRef mod = LuaIntf::LuaRef::createTable(L);
         //      UString GetUnicodeString(const AString &ansiString)
         typedef UString (*a2us)(const AString& ansiString);
         typedef AString (*u2as)(const UString& ansiString);
 
-        LuaIntf::LuaBinding(L)
-        .beginModule("p7zip")
-            .addVariableRef("g_StdOut", &g_StdOut)
-            .addVariableRef("g_StdErr", &g_StdErr)
-            .addFunction("execute", &p7zip_executeCommand, LUA_ARGS(const char*))
-            .addFunction("ConvertUnicodeToUTF8", &ConvertUnicodeToUTF8, LUA_ARGS(const UString &src, AString &dis))
-            .addFunction("A2UString", [](AString& as) -> UString{return GetUnicodeString(as);})
-            .addFunction("U2AString", [](UString& s) ->  AString{return GetAnsiString(s);})
-            .addFunction("GetUnicodeString", (a2us)&GetUnicodeString, LUA_ARGS(const AString& ansiString))
-            .addFunction("GetAnsiString",    (u2as)&GetAnsiString,    LUA_ARGS(const UString& unicodeString))
+		LuaIntf::LuaBinding lb = LuaIntf::LuaBinding(mod);
+        lb.beginModule("p7zip")
+		.addFunction("exec",    &p7zip_executeCommand, LUA_ARGS(const char*))
+		.addFunction("execute", &p7zip_executeCommand, LUA_ARGS(const char*))
+		.addFunction("ConvertUnicodeToUTF8", &ConvertUnicodeToUTF8, LUA_ARGS(const UString &src, AString &dis))
+		.addFunction("A2UString", [](AString& as) -> UString{return GetUnicodeString(as);})
+		.addFunction("U2AString", [](UString& s) ->  AString{return GetAnsiString(s);})
+		.addFunction("GetUnicodeString", (a2us)&GetUnicodeString, LUA_ARGS(const AString& ansiString))
+		.addFunction("GetAnsiString",    (u2as)&GetAnsiString,    LUA_ARGS(const UString& unicodeString))
+//		.beginModule("g")
+			.addVariableRef("StdOut", &g_StdOut)
+			.addVariableRef("StdErr", &g_StdErr)
+		.endModule()
         .beginClass<AString>("AString")
             .addConstructor(LUA_SP(AString), LUA_ARGS(void))
             .addConstructor(LUA_SP(AString), LUA_ARGS(const char *))
             .addFunction("IsEqualTo", &AString::IsEqualTo, LUA_ARGS(const char *))
             .addFunction("Trim", &AString::Trim)
 //            .addStaticFunction("tostring1", [](AString& self)->const char*{return self.Ptr();})
-            .addMetaFunction("tostring", [](AString& self)->const char*{return self.Ptr();})
+            .addMetaFunction("__tostring", [](AString& self)->const char*{return self.Ptr();})
+			.addMetaFunction("__add", [](AString& self, AString& second)->AString{return self+second;})
         .endClass()
         .beginClass<UString>("UString")
             .addConstructor(LUA_SP(UString), LUA_ARGS(void))
@@ -149,15 +151,11 @@ extern "C"
         .beginClass<CArchiveExtractCallback>("CArchiveExtractCallback")
         
         .endClass()
-        .endModule();
-//        mod.pushToStack();
+//        .endModule()
+		;
+        mod.pushToStack();
 
-//        lua_settop(L, 0);
-//        lua_newtable(L);
-//        lua_pushcfunction(L, execute);
-//        lua_setfield(L, -2, "execute");
-
-        return 0;
+        return 1;
     }
 
 }

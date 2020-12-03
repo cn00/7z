@@ -24,6 +24,7 @@ endmacro(source_group_by_dir)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions -DNDEBUG -D_REENTRANT -DENV_UNIX -add_rpath=libs")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_NO_CRYPTO -DBREAK_HANDLER -DUNICODE -D_UNICODE -DUNIX_USE_WIN_FILE -fPIC")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -DLUAINTF_LINK_LUA_COMPILED_IN_CXX=1 -DLUAINTF_HEADERS_ONLY=1 -DENV_HAVE_WCTYPE_H=1 -Wno-macro-redefined")
 
 set(USE_LUA_BIND ON)
 set(BUILD_SHARED_LIB ON)
@@ -77,11 +78,11 @@ if (APPLE AND BUILD_SHARED_LIB)
 	find_library(ObjC objc)
 	find_library(CoreFoundation CoreFoundation)
 	find_library(IOKit IOKit)
-    target_link_libraries(p7zip 
-        ${CoreFoundation} 
-        ${IOKit} 
-        ${ObjC}
-    )
+    # target_link_libraries(p7zip 
+    #     ${CoreFoundation} 
+    #     ${IOKit} 
+    #     ${ObjC}
+    # )
     
     if(P7ZIP_EXECUTABLE)
         target_link_libraries(7z 
