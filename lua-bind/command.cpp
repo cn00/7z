@@ -91,7 +91,7 @@ extern "C"
             .addFunction("Flush", &CStdOutStream::Flush)
         .endClass()
         .beginClass<COpenOptions>("COpenOptions")
-            .addConstructor(LUA_SP(COpenOptions), LUA_ARGS(void))
+            .addConstructor(LUA_SP(std::shared_ptr<COpenOptions>), LUA_ARGS(void))
             .addVariable("filePath", &COpenOptions::filePath)
             .addVariable("codecs", &COpenOptions::codecs)
             .addVariable("openType", &COpenOptions::openType)

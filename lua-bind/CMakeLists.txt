@@ -24,7 +24,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/../CPP/Common
     ${CMAKE_CURRENT_SOURCE_DIR}/../CPP/myWindows
     ${CMAKE_CURRENT_SOURCE_DIR}/../CPP/include_windows
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../lua/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../lua
 )
 
 add_library(p7zip_lua_bind ${p7zip_lua_bind_SRCS})
